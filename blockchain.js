@@ -1,11 +1,14 @@
 const sha256 = require('sha256');
 
 function Blockchain() {
+
     this.chain = [];
     this.pendingTransactions = [];
 
-    this.createNewBlock(100, '0', '0'); // genesis block
+    this.createNewBlock(this.GENESIS_NONCE, '0', '0'); // genesis block
 }
+
+Blockchain.prototype.GENESIS_NONCE = 121212;
 
 Blockchain.prototype.createNewBlock = function (nonce, previousBlockHash, hash) {
     const newBlock = {
