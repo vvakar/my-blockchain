@@ -15,5 +15,16 @@
   "bugs": {
     "url": "https://github.com/vvakar/my-blockchain/issues"
   },
-  "homepage": "https://github.com/vvakar/my-blockchain#readme"
+  "homepage": "https://github.com/vvakar/my-blockchain#readme",
+  "dependencies": {
+    "sha256": "^0.2.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2"
+  },
+  "scripts": {
+    "test": "mocha"
+  }
 }
