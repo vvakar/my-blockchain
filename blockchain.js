@@ -1,16 +1,12 @@
+const Constants = require('./constants');
 const sha256 = require('sha256');
 
 function Blockchain(nodeAddress) {
     this.chain = [];
     this.pendingTransactions = [];
     this.minerAdddress = nodeAddress;
-    this.createNewBlock(this.GENESIS_NONCE, this.GENESIS_HASH, this.GENESIS_HASH); // genesis block
+    this.createNewBlock(Constants.GENESIS_NONCE, Constants.GENESIS_HASH, Constants.GENESIS_HASH); // genesis block
 }
-
-Blockchain.prototype.GENESIS_NONCE = 121212;
-Blockchain.prototype.GENESIS_HASH = 'GENESIS';
-Blockchain.prototype.MINING_REWARD = 12.5;
-Blockchain.prototype.MINING_SENDER = '00';
 
 Blockchain.prototype.createNewBlock = function (nonce, previousBlockHash, hash) {
     const newBlock = {
@@ -73,7 +69,7 @@ Blockchain.prototype.mine = function() {
     const currentHash = this.hashBlock(prevHash, currentBlockData, nonce);
 
     // Add mining reward
-    this.createNewTransaction(this.MINING_REWARD, this.MINING_SENDER, this.minerAdddress);
+    this.createNewTransaction(Constants.MINING_REWARD, Constants.MINING_SENDER, this.minerAdddress);
     return this.createNewBlock(nonce, prevHash, currentHash);
 }
 

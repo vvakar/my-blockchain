@@ -1,6 +1,7 @@
+const Constants = require('../constants');
 const expect = require('chai').expect;
 const describe = require('mocha').describe;
-const Blockchain = require('/opt/blockchain/dev/blockchain');
+const Blockchain = require('../blockchain');
 
 describe('Blockchain Suite', function () {
     const DA_MINER = 'Miner1';
@@ -17,7 +18,7 @@ describe('Blockchain Suite', function () {
 
         it('starts with genesis block', function (done) {
             expect(bc.chain.length).equal(1);
-            expect(bc.chain[0].nonce).equal(bc.GENESIS_NONCE);
+            expect(bc.chain[0].nonce).equal(Constants.GENESIS_NONCE);
             done();
         });
 
@@ -66,8 +67,8 @@ describe('Blockchain Suite', function () {
             bc.createNewBlock(123, 'PREV', 'HASH');
             const blk = bc.mine();
             expect(blk.transactions.length).equal(1);
-            expect(blk.transactions[0].amount).equal(Blockchain.prototype.MINING_REWARD);
-            expect(blk.transactions[0].sender).equal(Blockchain.prototype.MINING_SENDER);
+            expect(blk.transactions[0].amount).equal(Constants.MINING_REWARD);
+            expect(blk.transactions[0].sender).equal(Constants.MINING_SENDER);
             expect(blk.transactions[0].recipient).equal(DA_MINER);
             done();
         });
@@ -83,8 +84,8 @@ describe('Blockchain Suite', function () {
             expect(blk.transactions[0].recipient).equal('Bill');
 
             // Reward transaction comes last
-            expect(blk.transactions[1].amount).equal(Blockchain.prototype.MINING_REWARD);
-            expect(blk.transactions[1].sender).equal(Blockchain.prototype.MINING_SENDER);
+            expect(blk.transactions[1].amount).equal(Constants.MINING_REWARD);
+            expect(blk.transactions[1].sender).equal(Constants.MINING_SENDER);
             expect(blk.transactions[1].recipient).equal(DA_MINER);
             done();
         });
