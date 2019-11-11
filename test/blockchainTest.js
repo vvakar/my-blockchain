@@ -4,10 +4,10 @@ const describe = require('mocha').describe;
 const Blockchain = require('../blockchain');
 
 describe('Blockchain Suite', function () {
-    const DA_MINER = 'Miner1';
+    const BC_ID = 'DaMiner';
     let bc;
     beforeEach('Setting up the userList', function () {
-        bc = new Blockchain(DA_MINER);
+        bc = new Blockchain(BC_ID);
     });
 
     describe('Blockchain basics', function () {
@@ -69,7 +69,7 @@ describe('Blockchain Suite', function () {
             expect(blk.transactions.length).equal(1);
             expect(blk.transactions[0].amount).equal(Constants.MINING_REWARD);
             expect(blk.transactions[0].sender).equal(Constants.MINING_SENDER);
-            expect(blk.transactions[0].recipient).equal(DA_MINER);
+            expect(blk.transactions[0].recipient).equal(BC_ID);
             done();
         });
 
@@ -86,7 +86,7 @@ describe('Blockchain Suite', function () {
             // Reward transaction comes last
             expect(blk.transactions[1].amount).equal(Constants.MINING_REWARD);
             expect(blk.transactions[1].sender).equal(Constants.MINING_SENDER);
-            expect(blk.transactions[1].recipient).equal(DA_MINER);
+            expect(blk.transactions[1].recipient).equal(BC_ID);
             done();
         });
     });

@@ -5,7 +5,11 @@
   "main": "blockchain.js",
   "scripts": {
     "test": "mocha",
-    "start": "nodemon --watch . -e js api.js"
+    "node_1": "nodemon --watch . -e js networkNode.js 3001",
+    "node_2": "nodemon --watch . -e js networkNode.js 3002",
+    "node_3": "nodemon --watch . -e js networkNode.js 3003",
+    "node_4": "nodemon --watch . -e js networkNode.js 3004",
+    "node_5": "nodemon --watch . -e js networkNode.js 3005"
   },
   "repository": {
     "type": "git",
@@ -21,6 +25,8 @@
     "express": "^4.17.1",
     "multer": "^1.4.2",
     "nodemon": "^1.19.4",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5",
     "sha256": "^0.2.0",
     "uuid": "^3.3.3"
   },
