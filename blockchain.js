@@ -1,5 +1,6 @@
 const Constants = require('./constants');
 const sha256 = require('sha256');
+const uuid = require('uuid/v1');
 
 function Blockchain(id) {
     this.chain = [];
@@ -35,11 +36,17 @@ Blockchain.prototype.createNewTransaction = function (amount, sender, recipient)
     const newTransaction = {
         amount: amount,
         sender: sender,
-        recipient: recipient
+        recipient: recipient,
+        transactionId: uuid().split('-').join('')
     };
-    this.pendingTransactions.push(newTransaction);
-    return this.getLastBlock().index + 1;
+
+    return newTransaction;
 }
+
+Blockchain.prototype.addTransactionToPendingTransactions = function(tx) {
+    this.pendingTransactions.push(tx);
+    return this.getLastBlock().index + 1;
+};
 
 Blockchain.prototype.hashBlock = function (prevBlocHash, currentBlockData, nonce) {
     const dataAsString = prevBlocHash + nonce.toString() + JSON.stringify(currentBlockData);
@@ -69,7 +76,8 @@ Blockchain.prototype.mine = function() {
     const currentHash = this.hashBlock(prevHash, currentBlockData, nonce);
 
     // Add mining reward
-    this.createNewTransaction(Constants.MINING_REWARD, Constants.MINING_SENDER, this.id);
+    const tx = this.createNewTransaction(Constants.MINING_REWARD, Constants.MINING_SENDER, this.id);
+    this.addTransactionToPendingTransactions(tx);
     return this.createNewBlock(nonce, prevHash, currentHash);
 }
 

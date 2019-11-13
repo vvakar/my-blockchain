@@ -1,5 +1,5 @@
 
-function ClusterInfo(nodeAddress, currentNodePort) {
+function ClusterInfo(currentNodePort) {
     this.currentNodeUrl = 'http://localhost:' + currentNodePort;
     this.networkNodes = [];
 }

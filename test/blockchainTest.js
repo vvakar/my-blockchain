@@ -23,19 +23,23 @@ describe('Blockchain Suite', function () {
         });
 
         it('Stores pending transactions', function (done) {
-            bc.createNewTransaction(100, "Bill", "Jill");
+            const tx = bc.createNewTransaction(100, "Bill", "Jill");
+            bc.addTransactionToPendingTransactions(tx);
             expect(bc.chain.length).equal(1);
             expect(bc.pendingTransactions.length).equal(1);
 
-            bc.createNewTransaction(200, "Jill", "Bill");
+            const t2 = bc.createNewTransaction(200, "Jill", "Bill");
+            bc.addTransactionToPendingTransactions(t2);
             expect(bc.chain.length).equal(1);
             expect(bc.pendingTransactions.length).equal(2);
             done();
         });
 
         it('creates block with pending transactions', function (done) {
-            bc.createNewTransaction(200, "Jill", "Bill");
-            bc.createNewTransaction(200, "Jill", "Bill");
+            const t1 = bc.createNewTransaction(200, "Jill", "Bill");
+            const t2 = bc.createNewTransaction(200, "Jill", "Bill");
+            bc.addTransactionToPendingTransactions(t1);
+            bc.addTransactionToPendingTransactions(t2);
             bc.createNewBlock(123, "PREV", 'HASH');
             expect(bc.chain.length).equal(2);
             expect(bc.getLastBlock().transactions.length).equal(2);
@@ -75,7 +79,8 @@ describe('Blockchain Suite', function () {
 
         it('issues reward for mining nonempty block', function (done) {
             bc.createNewBlock(123, 'PREV', 'HASH');
-            bc.createNewTransaction(200, "Jill", "Bill");
+            const tx =bc.createNewTransaction(200, "Jill", "Bill");
+            bc.addTransactionToPendingTransactions(tx);
             const blk = bc.mine();
             expect(blk.transactions.length).equal(2);
 
