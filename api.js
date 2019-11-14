@@ -201,6 +201,10 @@ const RunMe = function(port) {
         res.json(clusterInfo);
     });
 
+    app.get('/explorer', function(req, res) {
+        res.sendFile('./explorer.html', { root: __dirname });
+    });
+
     const server = app.listen(port, function () {
         console.log("Listening on port " + port);
     });
