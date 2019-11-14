@@ -74,8 +74,6 @@ const RunMe = function(port) {
         Promise.all(promises).then(data => {
             res.json({note: 'Successfully mined and broadcast', newBlock: newBlock});
         });
-
-        res.json({block: newBlock});
     });
 
     app.post('/receive-new-block', function (req, res) {
@@ -94,6 +92,36 @@ const RunMe = function(port) {
             res.json({note: 'REJECTED', newBlock: newBlock});
         }
 
+    });
+
+    app.get('/consensus', function(req, res) {
+        const ps = [];
+
+        clusterInfo.networkNodes.forEach(nn => {
+            const requestOptions = {
+                uri: nn + '/blockchain',
+                method: 'GET',
+                json: true
+            };
+
+            ps.push(rp(requestOptions));
+        });
+
+        let isReplaced = false;
+        Promise.all(ps)
+            .then(bcs => {
+                bcs.forEach(otherBc => {
+                    if (bc.chain.length < otherBc.chain.length) {
+                        if (Blockchain.prototype.isValid(otherBc)) {
+                            bc.chain = otherBc.chain;
+                            bc.pendingTransactions = otherBc.pendingTransactions;
+                            isReplaced = true;
+                        }
+                    }
+                });
+
+                res.json({ note: `Current chain has ${isReplaced ? 'indeed':'not'} been replaced`, chain: bc.chain });
+            });
     });
 
     app.post('/register-and-broadcast-node', function (req, res) {

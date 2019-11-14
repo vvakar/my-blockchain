@@ -94,6 +94,56 @@ describe('Blockchain Suite', function () {
             expect(blk.transactions[1].recipient).equal(BC_ID);
             done();
         });
+
+        it('validates valid block', function (done) {
+            const t1 = bc.createNewTransaction(200, "Jill", "Bill");
+            const t2 = bc.createNewTransaction(200, "Jill", "Bill");
+            bc.addTransactionToPendingTransactions(t1);
+            bc.addTransactionToPendingTransactions(t2);
+            bc.mine();
+
+            expect(Blockchain.prototype.isValid(bc)).to.be.true;
+            done();
+        });
+
+        it('invalidates block with invalid amount', function (done) {
+            const t1 = bc.createNewTransaction(200, "Jill", "Bill");
+            const t2 = bc.createNewTransaction(200, "Jill", "Bill");
+            bc.addTransactionToPendingTransactions(t1);
+            bc.addTransactionToPendingTransactions(t2);
+            bc.mine();
+
+            bc.chain[1].transactions[0].amount = 1000000;
+
+            expect(Blockchain.prototype.isValid(bc)).to.be.false;
+            done();
+        });
+
+        it('invalidates block with invalid prev hash', function (done) {
+            const t1 = bc.createNewTransaction(200, "Jill", "Bill");
+            const t2 = bc.createNewTransaction(200, "Jill", "Bill");
+            bc.addTransactionToPendingTransactions(t1);
+            bc.addTransactionToPendingTransactions(t2);
+            bc.mine();
+
+            bc.chain[1].previousBlockHash = "WRONG-HASH";
+
+            expect(Blockchain.prototype.isValid(bc)).to.be.false;
+            done();
+        });
+
+        it('invalidates bad genesis block', function (done) {
+            const t1 = bc.createNewTransaction(200, "Jill", "Bill");
+            const t2 = bc.createNewTransaction(200, "Jill", "Bill");
+            bc.addTransactionToPendingTransactions(t1);
+            bc.addTransactionToPendingTransactions(t2);
+            bc.mine();
+
+            bc.chain[0].hash = "WRONG-HASH";
+
+            expect(Blockchain.prototype.isValid(bc)).to.be.false;
+            done();
+        });
     });
 });
 
