@@ -7,13 +7,17 @@ const rp = require('request-promise');
 
 
 const RunMe = function(port) {
+    let NODE_ID, bc, clusterInfo;
     const app = express();
-    const NODE_ID = uuid().split('-').join('');
-    const bc = new Blockchain(NODE_ID);
-    const clusterInfo = new ClusterInfo(port);
-
     app.use(bodyParser.json({type: 'application/json'}));
     app.use(bodyParser.urlencoded({extended: false}));
+
+    app.reset = function() {
+        NODE_ID = uuid().split('-').join('');
+        bc = new Blockchain(NODE_ID);
+        clusterInfo = new ClusterInfo(port);
+    };
+    app.reset();
 
     app.get('/blockchain', function (req, res) {
         res.send(bc);
@@ -48,7 +52,7 @@ const RunMe = function(port) {
         });
 
         Promise.all(requestPromises).then(data => {
-            res.json({note: "Success"});
+            replySuccess(res);
         })
     });
 
@@ -85,8 +89,7 @@ const RunMe = function(port) {
         if (isCorrectIndex && isCorrectHash) {
             bc.chain.push(newBlock);
             bc.pendingTransactions = [];
-            res.json({note: 'Success'}
-            );
+            replySuccess(res);
         } else {
             res.json({note: 'REJECTED', newBlock: newBlock});
         }
@@ -117,6 +120,7 @@ const RunMe = function(port) {
         Promise.all(regNodePromises)
             .then(data => {
                 console.log(` ... registrations completed. Bulk-registering with ${newNodeUrl}`);
+                console.log(`VAL RESpOnSe ${JSON.stringify(data)}`);
 
                 const bulkRegisterOptions = {
                     uri: newNodeUrl + '/register-nodes-bulk',
@@ -127,7 +131,7 @@ const RunMe = function(port) {
 
                 return rp(bulkRegisterOptions);
             }).then(data => {
-            res.json({note: 'Success'});
+            replySuccess(res);
         });
 
     });
@@ -136,7 +140,7 @@ const RunMe = function(port) {
         const newNodeUrl = req.body.newNodeUrl;
         console.log(`/register-node: ${newNodeUrl}`);
         clusterInfo.addNetworkNode(newNodeUrl);
-        res.json({note: "Success"});
+        replySuccess(res);
     });
 
     app.post('/register-nodes-bulk', function (req, res) {
@@ -144,16 +148,24 @@ const RunMe = function(port) {
         console.log(`/register-nodes-bulk: ${allNodes}`);
 
         allNodes.forEach(n => clusterInfo.addNetworkNode(n));
-        res.json({note: "Success"});
+        replySuccess(res);
     });
 
     app.get('/cluster-info', function (req, res) {
         res.json(clusterInfo);
     });
 
-    app.listen(port, function () {
+    const server = app.listen(port, function () {
         console.log("Listening on port " + port);
     });
+
+    function replySuccess(res) {
+        res.json({note: "Success", from: `${clusterInfo.currentNodeUrl}` });
+    }
+
+    app.close = function() {
+        server.close();
+    };
 
     return app;
 };
