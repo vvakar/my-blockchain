@@ -124,6 +124,24 @@ const RunMe = function(port) {
             });
     });
 
+    app.get('/block/:hash', function(req, res) {
+        const hash = req.params.hash;
+        const blk = bc.getBlock(hash);
+        res.json({ block: blk });
+    });
+
+    app.get('/transaction/:transactionId', function(req, res) {
+        const tx = req.params.transactionId;
+        const txBlk = bc.getTransaction(tx);
+        res.json( { transaction: txBlk.transaction, block: txBlk.block });
+    });
+
+    app.get('/address/:address', function(req, res) {
+        const addr = req.params.address;
+        const data = bc.getAddressData(addr);
+        res.json( { transactions: data.transactions, balance: data.balance });
+    });
+
     app.post('/register-and-broadcast-node', function (req, res) {
         const newNodeUrl = req.body.newNodeUrl;
         console.log(`/register-and-broadcast-node newNodeUrl ${newNodeUrl}`);

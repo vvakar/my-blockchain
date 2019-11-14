@@ -87,6 +87,52 @@ Blockchain.prototype.mine = function() {
     return this.createNewBlock(nonce, prevHash, currentHash);
 };
 
+Blockchain.prototype.getBlock = function(hash) {
+    let ret = null;
+    this.chain.forEach(b => {
+        if (b.hash === hash) {
+            ret = b;
+        }
+    });
+
+    return ret;
+};
+
+
+Blockchain.prototype.getTransaction = function(txid) {
+    let transaction = null, block = null;
+
+    this.chain.forEach(b =>
+        b.transactions.forEach(t => {
+            if (t.transactionId === txid) {
+                transaction = t;
+                block = b;
+            }
+        })
+    );
+
+    return { transaction: transaction, block: block};
+};
+
+Blockchain.prototype.getAddressData = function(address) {
+    const res = [];
+    let balance = 0;
+
+    this.chain.forEach(b =>
+        b.transactions.forEach(t => {
+            if (t.sender === address) {
+                balance -= t.amount;
+                res.push(t);
+            } else if (t.recipient === address) {
+                balance += t.amount;
+                res.push(t);
+            }
+        })
+    );
+
+    return { transactions: res, balance: balance };
+};
+
 Blockchain.prototype.isValid = function(bc) {
     let isOk = true;
 
